@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 import contactsRouter from "./routes/contactsRouter.js";
+import contactTypesRouter from "./routes/contactTypesRouter.js";
 
 const { PORT = 3000, DB_HOST, DB_NAME, DB_USER, DB_PASSWORD } = process.env;
 
@@ -15,6 +16,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/contacts/types", contactTypesRouter);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) =>
@@ -38,7 +40,9 @@ const connection = mongoose.connect(DB_HOST, {
 
 connection
   .then(() => {
-    app.listen(PORT, () => console.log("Database connection successful"));
+    app.listen(PORT, () =>
+      console.log(`Database connection successful on port ${PORT}`)
+    );
   })
   .catch(({ message }) => {
     console.error(`Server not running. Error message: ${message}`);

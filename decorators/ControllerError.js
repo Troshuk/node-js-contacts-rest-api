@@ -1,2 +1,2 @@
-export const catchErrors = (action) => (req, res, next) =>
-  action(req, res).catch(next);
+export const catchErrors = (callback) => (req, res, next) =>
+  callback(req, res).catch(next);

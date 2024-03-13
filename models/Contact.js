@@ -1,20 +1,33 @@
-import { Schema, model } from "mongoose";
+import { model } from "mongoose";
+import BaseSchema from "./BaseSchema.js";
+import ContactType from "./ContactType.js";
 
 export default model(
   "contact",
-  new Schema(
+  new BaseSchema(
     {
       name: {
         type: String,
-        required: [true, "Set name for contact"],
+        required: [true, "Contact's name is required"],
       },
-      email: String,
-      phone: String,
+      email: {
+        type: String,
+        unique: true,
+      },
+      phone: {
+        type: String,
+        unique: true,
+      },
       favorite: {
         type: Boolean,
         default: false,
       },
+      type: {
+        type: BaseSchema.Types.ObjectId,
+        ref: ContactType.modelName,
+        required: true,
+      },
     },
-    { versionKey: false }
+    { versionKey: false, timestamps: true }
   )
 );

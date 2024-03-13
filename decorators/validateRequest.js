@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 import { StatusCodes } from "http-status-codes";
 
 import HttpError from "../helpers/HttpError.js";
@@ -15,8 +15,11 @@ export const validateBody = (schema) => {
 
 export const validateId = ({ params: { id } }, _, next) => {
   next(
-    mongoose.Types.ObjectId.isValid(id)
+    isValidObjectId(id)
       ? undefined
-      : HttpError(StatusCodes.BAD_REQUEST, "This is not a valid resource ID.")
+      : HttpError(
+          StatusCodes.BAD_REQUEST,
+          `This is not a valid resource ID: ${id}`
+        )
   );
 };
