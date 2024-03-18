@@ -8,12 +8,12 @@ import {
   updateContact,
   updateContactStatus,
 } from "../controllers/contactsControllers.js";
-import { validateBody, validateId } from "../decorators/validateRequest.js";
+import { validateBody, validateId } from "../middlewares/validateRequest.js";
 import {
   createContactSchema,
   updateContactSchema,
   updateContactStatusSchema,
-} from "../schemas/contactsSchemas.js";
+} from "../validationSchemas/contactsSchemas.js";
 
 const contactsRouter = express.Router();
 

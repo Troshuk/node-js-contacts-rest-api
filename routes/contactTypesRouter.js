@@ -1,6 +1,6 @@
 import express from "express";
 
-import { validateBody, validateId } from "../decorators/validateRequest.js";
+import { validateBody, validateId } from "../middlewares/validateRequest.js";
 import {
   createContactType,
   deleteContactType,
@@ -8,7 +8,7 @@ import {
   getOneContactType,
   updateContactType,
 } from "../controllers/contactTypesControllers.js";
-import { contactTypeSchema } from "../schemas/contactTypesSchemas.js";
+import { contactTypeSchema } from "../validationSchemas/contactTypesSchemas.js";
 
 const contactTypesRouter = express.Router();
 

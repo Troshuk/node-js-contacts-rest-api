@@ -1,6 +1,7 @@
 import { model } from "mongoose";
 import BaseSchema from "./BaseSchema.js";
 import ContactType from "./ContactType.js";
+import User from "./User.js";
 
 export default model(
   "contact",
@@ -12,7 +13,6 @@ export default model(
       },
       email: {
         type: String,
-        unique: true,
       },
       phone: {
         type: String,
@@ -25,7 +25,12 @@ export default model(
       type: {
         type: BaseSchema.Types.ObjectId,
         ref: ContactType.modelName,
-        required: true,
+        required: [true, "Contact's Type ID is required"],
+      },
+      owner: {
+        type: BaseSchema.Types.ObjectId,
+        ref: User.modelName,
+        required: [true, "Owner's ID is required"],
       },
     },
     { versionKey: false, timestamps: true }

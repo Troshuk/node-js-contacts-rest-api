@@ -7,6 +7,8 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import contactTypesRouter from "./routes/contactTypesRouter.js";
+import usersRouter from "./routes/usersRouter.js";
+import validateAuth from "./middlewares/validateAuth.js";
 
 const { PORT = 3000, DB_HOST, DB_NAME, DB_USER, DB_PASSWORD } = process.env;
 
@@ -16,6 +18,13 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+// Unauthenticated routes:
+app.use("/api/users", usersRouter);
+
+// Apply auth middleware
+app.use("/api", validateAuth);
+
+// Authenticated routes:
 app.use("/api/contacts/types", contactTypesRouter);
 app.use("/api/contacts", contactsRouter);
 
@@ -32,18 +41,13 @@ app.use((req, _, res, __) => {
   res.status(status).json({ message });
 });
 
-const connection = mongoose.connect(DB_HOST, {
-  dbName: DB_NAME,
-  user: DB_USER,
-  pass: DB_PASSWORD,
-});
-
-connection
-  .then(() => {
+mongoose
+  .connect(DB_HOST, { dbName: DB_NAME, user: DB_USER, pass: DB_PASSWORD })
+  .then(() =>
     app.listen(PORT, () =>
       console.log(`Database connection successful on port ${PORT}`)
-    );
-  })
+    )
+  )
   .catch(({ message }) => {
     console.error(`Server not running. Error message: ${message}`);
     process.exit(1);
