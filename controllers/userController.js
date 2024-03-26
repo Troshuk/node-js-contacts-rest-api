@@ -31,8 +31,6 @@ export const authenticateUser = catchErrors(async ({ body }, res) => {
   let user = await userService.find({ email }, '+password');
   const { id } = user;
 
-  console.log(user);
-
   if (!user || !user.validatePassword(password)) {
     throw new HttpError(StatusCodes.UNAUTHORIZED, 'Email or password is wrong');
   }
