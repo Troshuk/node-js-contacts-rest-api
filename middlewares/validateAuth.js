@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import HttpError from '../helpers/HttpError.js';
 import usersServices from '../services/userService.js';
 import jwtService from '../services/jwtService.js';
-import catchErrors from '../decorators/catchHttpErrors.js';
+import catchErrors from '../decorators/catchErrors.js';
 
 export default catchErrors(async (req, _, next) => {
   const { authorization } = req.headers;

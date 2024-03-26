@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import HttpError from '../helpers/HttpError.js';
-import catchErrors from '../decorators/catchHttpErrors.js';
+import catchErrors from '../decorators/catchErrors.js';
 
 export default (...roles) =>
   catchErrors(({ user }, _, next) => {

@@ -2,7 +2,7 @@ import { isValidObjectId } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
 import HttpError from '../helpers/HttpError.js';
-import catchErrors from '../decorators/catchHttpErrors.js';
+import catchErrors from '../decorators/catchErrors.js';
 
 export const validateBody = (schema) =>
   catchErrors(({ body }, _, next) => {
