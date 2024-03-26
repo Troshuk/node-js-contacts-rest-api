@@ -1,32 +1,31 @@
-import jwt from "jsonwebtoken";
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from 'http-status-codes';
 
-import HttpError from "../helpers/HttpError.js";
-import * as usersServices from "../services/usersServices.js";
+import HttpError from '../helpers/HttpError.js';
+import usersServices from '../services/userService.js';
+import jwtService from '../services/jwtService.js';
+import catchErrors from '../decorators/catchHttpErrors.js';
 
-const { JWT_SECRET } = process.env;
+export default catchErrors(async (req, _, next) => {
+  const { authorization } = req.headers;
 
-export default async (req, _, next) => {
-  try {
-    const { authorization } = req.headers;
-
-    if (!authorization)
-      throw HttpError(StatusCodes.UNAUTHORIZED, "Not authorized");
-
-    const [bearer, token] = authorization.split(" ");
-
-    if (bearer !== "Bearer" || !token)
-      throw HttpError(StatusCodes.UNAUTHORIZED, "Not authorized");
-
-    const { id } = jwt.verify(token, JWT_SECRET);
-    const user = await usersServices.findById(id);
-
-    if (!user || user.token !== token)
-      throw HttpError(StatusCodes.UNAUTHORIZED, "Not authorized");
-
-    req.user = user;
-    next();
-  } catch ({ message, code = StatusCodes.UNAUTHORIZED }) {
-    next(HttpError(code, message));
+  if (!authorization) {
+    throw new HttpError(StatusCodes.UNAUTHORIZED, 'Not authorized');
   }
-};
+
+  const [bearer, token] = authorization.split(' ');
+
+  if (bearer !== 'Bearer') {
+    throw new HttpError(StatusCodes.UNAUTHORIZED, 'Not authorized');
+  }
+
+  const id = jwtService.checkToken(token);
+  const user = await usersServices.findById(id);
+
+  if (!user || user.token !== token) {
+    throw new HttpError(StatusCodes.UNAUTHORIZED, 'Not authorized');
+  }
+
+  req.user = user;
+
+  next();
+});

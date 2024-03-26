@@ -1,9 +1,12 @@
-import { getReasonPhrase } from "http-status-codes";
+import { getReasonPhrase } from 'http-status-codes';
 
-const HttpError = (status, message = getReasonPhrase(status)) => {
-  const error = new Error(message);
-  error.status = status;
-  return error;
-};
+class HttpError extends Error {
+  constructor(status, message = getReasonPhrase(status), data = undefined) {
+    super(message);
+
+    this.status = status;
+    this.data = data;
+  }
+}
 
 export default HttpError;

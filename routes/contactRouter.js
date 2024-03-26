@@ -8,21 +8,28 @@ import {
   updateContact,
   updateContactStatus,
 } from '../controllers/contactControllers.js';
-import { validateBody, validateId } from '../middlewares/validateRequest.js';
+import {
+  validateBody,
+  validateId,
+  validateQuery,
+} from '../middlewares/validateRequest.js';
 import {
   createContactSchema,
   updateContactSchema,
   updateContactStatusSchema,
 } from '../validationSchemas/contactSchemas.js';
+import { querySchema } from '../validationSchemas/querySchemas.js';
 
 const router = express.Router();
+router.param('id', validateId);
 
 router
   .route('/')
-  .get(getAllContacts)
+  .get(
+    validateQuery(querySchema(['name', 'email', 'phone', 'favorite', 'type'])),
+    getAllContacts
+  )
   .post(validateBody(createContactSchema), createContact);
-
-router.use('/:id', validateId);
 
 router
   .route('/:id')
@@ -32,7 +39,6 @@ router
 
 router.patch(
   '/:id/favorite',
-  validateId,
   validateBody(updateContactStatusSchema),
   updateContactStatus
 );

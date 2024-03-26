@@ -1,10 +1,10 @@
-import { model } from "mongoose";
-import BaseSchema from "./BaseSchema.js";
-import ContactType from "./ContactType.js";
-import User from "./User.js";
+import { model } from 'mongoose';
+import BaseSchema from './BaseSchema.js';
+import ContactType from './ContactType.js';
+import User from './User.js';
 
 export default model(
-  "contact",
+  'contact',
   new BaseSchema(
     {
       name: {
