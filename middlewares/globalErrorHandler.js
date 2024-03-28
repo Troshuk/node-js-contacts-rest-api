@@ -12,7 +12,7 @@ export default (req, _, res, __) => {
   } = req;
   const response = { message };
 
-  if (serverConfigs.ENVIRONMENT_TYPE !== envTypes.PRODUCTION) {
+  if (serverConfigs.APP.ENV !== envTypes.PRODUCTION) {
     response.data = data;
     response.stack = stack;
   } else if (status === StatusCodes.INTERNAL_SERVER_ERROR) {

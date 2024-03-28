@@ -1,7 +1,8 @@
 import { defaultEnv, envTypes } from '../constants/configConstants.js';
 
 const {
-  ENVIRONMENT_TYPE: ENV = defaultEnv,
+  NODE_ENV: ENV = defaultEnv,
+
   PORT = 3000,
 
   DB_HOST,
