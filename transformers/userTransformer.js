@@ -1,4 +1,5 @@
-export const transformUser = ({ email, subscription }) => ({
+export const transformUser = ({ email, subscription, avatarURL }) => ({
   email,
   subscription,
+  avatarURL,
 });

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 export const handlePostSaveError = (error, _, next) => {
   // eslint-disable-next-line no-param-reassign
@@ -32,6 +33,16 @@ export function preFindOneAndUpdatePassword(next) {
 export function preSavePassword(next) {
   if (this.isModified('password')) {
     this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10));
+  }
+
+  next();
+}
+
+export function preCreateAvatar(next) {
+  if (this.isNew) {
+    const emailHash = crypto.createHash('md5').update(this.email).digest('hex');
+
+    this.avatarURL = `https://www.gravatar.com/avatar/${emailHash}.jpg?d=identicon`;
   }
 
   next();

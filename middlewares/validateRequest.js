@@ -36,3 +36,15 @@ export const validateId = catchErrors(({ params: { id } }, _, next) => {
 
   next();
 });
+
+export const validateFile = (fieldName) =>
+  catchErrors(({ file }, _, next) => {
+    if (!file) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `File is required for this request through field [${fieldName}]`
+      );
+    }
+
+    next();
+  });

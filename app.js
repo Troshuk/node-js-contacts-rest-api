@@ -15,10 +15,17 @@ import serverConfigs from './configs/serverConfigs.js';
 
 const app = express();
 
-if (serverConfigs.ENV === envTypes.DEVELOPMENT) app.use(morgan('dev'));
+const {
+  APP: { ENV, PORT },
+  DB: { DB_HOST, DB_NAME, DB_USER, DB_PASSWORD },
+  FILE: { STATIC_FOLDER },
+} = serverConfigs;
+
+if (ENV === envTypes.DEVELOPMENT) app.use(morgan('dev'));
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(STATIC_FOLDER));
 
 // Unauthenticated routes:
 app.use('/api/users', usersRouter);
@@ -37,17 +44,16 @@ app.use((_, res) => {
 app.use(globalErrorHandler);
 
 mongoose
-  .connect(serverConfigs.DB_HOST, {
-    dbName: serverConfigs.DB_NAME,
-    user: serverConfigs.DB_USER,
-    pass: serverConfigs.DB_PASSWORD,
+  .connect(DB_HOST, {
+    dbName: DB_NAME,
+    user: DB_USER,
+    pass: DB_PASSWORD,
   })
   .then(() => {
-    app.listen(serverConfigs.PORT, () => {
+    app.listen(PORT, () => {
+      app.emit('appStarted');
       // eslint-disable-next-line no-console
-      console.log(
-        `Database connection successful on port ${serverConfigs.PORT}`
-      );
+      console.log(`Database connection successful on port ${PORT}`);
     });
   })
   .catch(({ message }) => {
@@ -55,3 +61,5 @@ mongoose
     console.error(`Server not running. Error message: ${message}`);
     process.exit(1);
   });
+
+export default app;

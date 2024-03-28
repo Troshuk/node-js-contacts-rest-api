@@ -14,6 +14,8 @@ const deleteById = (id) => User.findByIdAndDelete(id);
 
 const checkIfExists = (filter) => User.exists(filter);
 
+const deleteAll = (filter) => User.deleteMany(filter);
+
 export default {
   find,
   findById,
@@ -22,4 +24,5 @@ export default {
   getAll,
   deleteById,
   checkIfExists,
+  deleteAll,
 };

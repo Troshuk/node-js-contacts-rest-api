@@ -30,3 +30,11 @@ export const updateUserSubscriptionSchema = Joi.object({
 });
 
 export const updateUserSchema = Joi.object(user);
+
+export const forgotPasswordSchema = Joi.object({
+  email: user.email.required(),
+});
+
+export const updatePasswordSchema = Joi.object({
+  password: user.password.required(),
+});

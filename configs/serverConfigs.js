@@ -1,8 +1,7 @@
-import { defaultEnv } from '../constants/configConstants.js';
+import { defaultEnv, envTypes } from '../constants/configConstants.js';
 
 const {
   ENVIRONMENT_TYPE: ENV = defaultEnv,
-
   PORT = 3000,
 
   DB_HOST,
@@ -10,17 +9,51 @@ const {
   DB_USER,
   DB_PASSWORD,
 
+  TEST_DB_NAME,
+
   JWT_SECRET,
   JWT_EXPIRE = '1h',
+
+  STATIC_FOLDER = 'public',
+  TEMP_FOLDER = 'temp',
+
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+  CLOUDINARY_FOLDER,
 } = process.env;
 
-export default {
-  ENV,
-  PORT,
+const DB = {
   DB_HOST,
-  DB_NAME,
+  DB_NAME: ENV === envTypes.TEST ? TEST_DB_NAME : DB_NAME,
   DB_USER,
   DB_PASSWORD,
-  JWT_SECRET,
-  JWT_EXPIRE,
+};
+
+export default {
+  APP: {
+    ENV,
+    PORT,
+  },
+  DB,
+  TEST_DB: {
+    DB_HOST,
+    DB_NAME: TEST_DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+  },
+  JWT: {
+    JWT_SECRET,
+    JWT_EXPIRE,
+  },
+  FILE: {
+    STATIC_FOLDER,
+    TEMP_FOLDER,
+  },
+  CLOUDINARY: {
+    CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
+    CLOUDINARY_FOLDER,
+  },
 };
