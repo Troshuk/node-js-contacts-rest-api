@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    command: mongod --quiet --logpath /dev/null
+    logging:
+      driver: "none"
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - ${PORT}:${PORT}
+    depends_on: 
+      - mongodb

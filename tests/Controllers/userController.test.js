@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { StatusCodes } from 'http-status-codes';
+import { expect, it, jest } from '@jest/globals';
 
 import app from '../../app.js';
 import { userSubscriptionTypes } from '../../constants/userConstants.js';
@@ -28,6 +29,7 @@ const errorMessages = {
   passwordIsRequired: '"password" is required',
   unallowedField: `"${unknownField}" is not allowed`,
   wrongCreds: 'Email or password is wrong',
+  notVerified: 'Email verification is required to be able to log in',
 };
 
 describe(`test ${routes.login}`, () => {
@@ -42,22 +44,22 @@ describe(`test ${routes.login}`, () => {
   it(`Request validation | ${errorMessages.emailIsRequired}`, async () => {
     const { statusCode, body } = await logIn({});
 
-    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(body.message).toBe(errorMessages.emailIsRequired);
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it(`Request validation | ${errorMessages.emailIsInvalid}`, async () => {
     const { statusCode, body } = await logIn({ email: invalidEmail });
 
-    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(body.message).toBe(errorMessages.emailIsInvalid);
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it(`Request validation | "email" is valid, ${errorMessages.passwordIsRequired}`, async () => {
     const { statusCode, body } = await logIn({ email: loginData.email });
 
-    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(body.message).toBe(errorMessages.passwordIsRequired);
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it('Request validation | "password" must be a valid email', async () => {
@@ -66,30 +68,37 @@ describe(`test ${routes.login}`, () => {
       password: invalidPassword,
     });
 
-    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(body.message).toContain('"password" with value');
     expect(body.message).toContain('fails to match the required pattern');
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it(`Request validation | ${errorMessages.unallowedField}`, async () => {
     const { statusCode, body } = await logIn({ ...loginData, unknownField });
 
-    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(body.message).toBe(errorMessages.unallowedField);
+    expect(statusCode).toBe(StatusCodes.BAD_REQUEST);
   });
 
   it(`Request validation | ${errorMessages.wrongCreds}`, async () => {
     const { statusCode, body } = await logIn(loginData);
 
-    expect(statusCode).toBe(StatusCodes.UNAUTHORIZED);
     expect(body.message).toBe(errorMessages.wrongCreds);
+    expect(statusCode).toBe(StatusCodes.UNAUTHORIZED);
   });
 
-  it('Request validation | Login was successfull', async () => {
+  it(`Request validation | ${errorMessages.notVerified}`, async () => {
     await UserService.create(loginData);
     const { statusCode, body } = await logIn(loginData);
 
-    expect(statusCode).toBe(StatusCodes.OK);
+    expect(body.message).toBe(errorMessages.notVerified);
+    expect(statusCode).toBe(StatusCodes.UNAUTHORIZED);
+  });
+
+  it('Request validation | Login was successfull', async () => {
+    await UserService.create({ ...loginData, verified: true });
+    const { statusCode, body } = await logIn(loginData);
+
     expect(body).toEqual(
       expect.objectContaining({
         token: expect.any(String),
@@ -100,5 +109,6 @@ describe(`test ${routes.login}`, () => {
         }),
       })
     );
+    expect(statusCode).toBe(StatusCodes.OK);
   });
 });

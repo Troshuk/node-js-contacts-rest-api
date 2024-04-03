@@ -10,6 +10,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@sendgrid/mail": "^8.1.1",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.0.3",
