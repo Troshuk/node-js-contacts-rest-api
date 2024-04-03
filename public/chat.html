@@ -79,6 +79,7 @@
             type="text"
             autocomplete="false"
             placeholder="Enter your message"
+            required
           />
           <button type="submit">send</button>
         </div>
@@ -106,48 +107,68 @@
   </body>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const myToken = '';
-    io({
-      extraHeaders: {
-        authorization: `Bearer ${myToken}`,
-      },
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const myToken = urlParams.get('token');
+    const myRoom = urlParams.get('room');
+    const myName = urlParams.get('name');
+
+    const msgForm = document.getElementById('msgForm');
+    const joinForm = document.getElementById('joinForm');
+    const roomNameEl = document.getElementById('roomName');
+    const nicknameField = document.getElementById('nickname');
+    const roomField = document.getElementById('room');
+    const msgField = document.getElementById('msg');
+
     let nickname;
     let room;
-    let socket = io.connect('http://localhost:3000');
+    let socket;
+
+    if (joinForm) {
+      if (myRoom) {
+        room = myRoom;
+        roomField.value = myRoom;
+      }
+
+      if (myName) {
+        nickname = myName;
+        nicknameField.value = myName;
+      }
+    }
 
     const initSocket = (room, nickname) => {
-      socket = io.connect('/space');
+      io({
+        extraHeaders: {
+          authorization: `Bearer ${myToken}`,
+        },
+      });
+      socket = io.connect('http://localhost:3000/space');
 
-      socket.on('message', ({ nickname, message }) => {
-        const messages = document.getElementById('messages');
+      socket.on('connect', () => {
+        msgForm.classList.remove('inactive');
+        joinForm.classList.add('inactive');
+        roomNameEl.innerHTML = room;
 
-        messages.insertAdjacentHTML(
-          'afterbegin',
-          `
+        socket.emit('join', { room, nickname });
+
+        socket.on('message', ({ nickname, message }) => {
+          const messages = document.getElementById('messages');
+
+          messages.insertAdjacentHTML(
+            'afterbegin',
+            `
             <li>
                 <span style="color: orangered; font-style: italic">${nickname}</span>
                 &nbsp;${message}
             </li>
            `
-        );
-      });
-
-      socket.on('connect', () => {
-        socket.emit('join', { room, nickname });
+          );
+        });
       });
     };
-
-    const msgForm = document.getElementById('msgForm');
-    const joinForm = document.getElementById('joinForm');
-    const roomNameEl = document.getElementById('roomName');
 
     joinForm &&
       joinForm.addEventListener('submit', (event) => {
         event.preventDefault();
-
-        const nicknameField = document.getElementById('nickname');
-        const roomField = document.getElementById('room');
 
         nickname = nicknameField?.value;
         room = roomField?.value;
@@ -155,17 +176,11 @@
         if (!nickname || !room) return;
 
         initSocket(room, nickname);
-
-        msgForm.classList.remove('inactive');
-        joinForm.classList.add('inactive');
-        roomNameEl.innerHTML = room;
       });
 
     msgForm &&
       msgForm.addEventListener('submit', (event) => {
         event.preventDefault();
-
-        const msgField = document.getElementById('msg');
 
         message = msgField?.value;
 

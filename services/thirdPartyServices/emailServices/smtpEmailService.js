@@ -5,7 +5,7 @@ import EmailBase from './EmailBase.js';
 import smtpTransporter from './transporters/smtpTransporter.js';
 import serverConfigs from '../../../configs/serverConfigs.js';
 
-const { BASE_API_URL } = serverConfigs.APP;
+const { BASE_API_URL, API_URL } = serverConfigs.APP;
 
 class SmtpEmail extends EmailBase {
   #sendPug(to, template, subject, data = {}, from = this.from) {
@@ -36,6 +36,17 @@ class SmtpEmail extends EmailBase {
       'Reset Password for Contacts App',
       {
         url: `${BASE_API_URL}/users/password/reset/${token}`,
+      }
+    );
+  }
+
+  sendJoinChatLink(to, name, room, token) {
+    return this.#sendPug(
+      to,
+      'joinChat',
+      'Join private chat through Contacts App',
+      {
+        url: `${API_URL}/chat.html?name=${name}&room=${room}&token=${token}`,
       }
     );
   }

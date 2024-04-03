@@ -9,6 +9,7 @@ import contactTypeService from '../services/modelServices/ContactTypeService.js'
 import cloudinaryService from '../services/thirdPartyServices/cloudinaryService.js';
 import fileService from '../services/fileService.js';
 import smtpEmailService from '../services/thirdPartyServices/emailServices/smtpEmailService.js';
+import cryptoService from '../services/cryptoService.js';
 
 const getId = (req) => req.params.id;
 const getUserId = (req) => req.user._id;
@@ -137,5 +138,29 @@ export const deleteUserById = catchErrors(async (req, res) => {
     user,
     deletedContactsCount: contacts.deletedCount,
     deletedContactTypesCount: contactTypes.deletedCount,
+  });
+});
+
+export const createChat = catchErrors(async (req, res) => {
+  const { email, token } = req.user;
+  const room = cryptoService.generateToken();
+
+  await smtpEmailService.sendJoinChatLink(email, email, room, token);
+
+  res.json({
+    message: 'Email to join this chat has been sent to your email address',
+    room,
+  });
+});
+
+export const joinChat = catchErrors(async (req, res) => {
+  const { email, token } = req.user;
+  const { room } = req.params;
+
+  await smtpEmailService.sendJoinChatLink(email, email, room, token);
+
+  res.json({
+    message: 'Email to join this chat has been sent to your email address',
+    room,
   });
 });

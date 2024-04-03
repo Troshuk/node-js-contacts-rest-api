@@ -15,12 +15,14 @@ import {
 } from '../validationSchemas/userSchemas.js';
 import {
   authenticateUser,
+  createChat,
   createUser,
   deleteUserById,
   forgotPassword,
   getAllUsers,
   getCurrentUser,
   getUserById,
+  joinChat,
   removeToken,
   resendVerifiation,
   updatePassword,
@@ -60,6 +62,9 @@ router.get('/verify/:token', verifyUser);
 router.use(validateAuth);
 
 router.post('/logout', removeToken);
+
+router.get('/chat/create', createChat);
+router.get('/chat/join/:room', joinChat);
 
 router.get('/current', getCurrentUser);
 
