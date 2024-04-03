@@ -2,8 +2,8 @@ import request from 'supertest';
 import { StatusCodes } from 'http-status-codes';
 
 import app from '../../app.js';
-import userService from '../../services/userService.js';
 import { userSubscriptionTypes } from '../../constants/userConstants.js';
+import UserService from '../../services/modelServices/UserService.js';
 
 const api = request.agent(app);
 
@@ -36,7 +36,7 @@ describe(`test ${routes.login}`, () => {
   });
 
   afterEach(async () => {
-    await userService.deleteAll({});
+    await UserService.deleteAll({});
   });
 
   it(`Request validation | ${errorMessages.emailIsRequired}`, async () => {
@@ -86,7 +86,7 @@ describe(`test ${routes.login}`, () => {
   });
 
   it('Request validation | Login was successfull', async () => {
-    await userService.create(loginData);
+    await UserService.create(loginData);
     const { statusCode, body } = await logIn(loginData);
 
     expect(statusCode).toBe(StatusCodes.OK);

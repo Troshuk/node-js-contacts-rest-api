@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 
 import catchErrors from '../decorators/catchErrors.js';
 import HttpError from '../helpers/HttpError.js';
-import contactTypeService from '../services/contactTypeService.js';
 import { transformContactType } from '../transformers/contactTypeTransformer.js';
+import contactTypeService from '../services/modelServices/ContactTypeService.js';
 
 const getId = (req) => req.params.id;
 
@@ -16,7 +16,7 @@ export const getAllContactTypes = catchErrors(async (req, res) => {
 });
 
 export const getOneContactType = catchErrors(async (req, res) => {
-  const type = await contactTypeService.getOne({
+  const type = await contactTypeService.findOne({
     _id: getId(req),
     owner: req.user,
   });
@@ -47,7 +47,7 @@ export const updateContactType = catchErrors(async (req, res) => {
 });
 
 export const deleteContactType = catchErrors(async (req, res) => {
-  const type = await contactTypeService.removeOne({
+  const type = await contactTypeService.deleteOne({
     _id: getId(req),
     owner: req.user,
   });

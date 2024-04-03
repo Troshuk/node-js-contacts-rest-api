@@ -8,7 +8,7 @@ import {
 import {
   authenticateUserSchema,
   createUserSchema,
-  forgotPasswordSchema,
+  requireEmailSchema,
   updatePasswordSchema,
   updateUserSchema,
   updateUserSubscriptionSchema,
@@ -22,10 +22,12 @@ import {
   getCurrentUser,
   getUserById,
   removeToken,
+  resendVerifiation,
   updatePassword,
   updateUserAvatar,
   updateUserById,
   updateUserSubscription,
+  verifyUser,
 } from '../controllers/userController.js';
 import validateAuth from '../middlewares/validateAuth.js';
 import validateRole from '../middlewares/validateRole.js';
@@ -41,7 +43,7 @@ router.post('/login', validateBody(authenticateUserSchema), authenticateUser);
 
 router.post(
   '/password/forgot',
-  validateBody(forgotPasswordSchema),
+  validateBody(requireEmailSchema),
   forgotPassword
 );
 
@@ -50,6 +52,9 @@ router.post(
   validateBody(updatePasswordSchema),
   updatePassword
 );
+
+router.post('/verify', validateBody(requireEmailSchema), resendVerifiation);
+router.get('/verify/:token', verifyUser);
 
 // Apply auth middleware
 router.use(validateAuth);

@@ -1,5 +1,5 @@
 import cloudinary from 'cloudinary';
-import serverConfigs from '../configs/serverConfigs.js';
+import serverConfigs from '../../configs/serverConfigs.js';
 
 const {
   CLOUDINARY_CLOUD_NAME,

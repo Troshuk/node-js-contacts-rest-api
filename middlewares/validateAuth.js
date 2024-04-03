@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import HttpError from '../helpers/HttpError.js';
-import usersServices from '../services/userService.js';
+import usersServices from '../services/modelServices/UserService.js';
 import jwtService from '../services/jwtService.js';
 import catchErrors from '../decorators/catchErrors.js';
 

@@ -5,7 +5,7 @@ module.exports = {
   },
   globals: {},
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 'latest',
   },
   extends: ['airbnb-base', 'eslint:recommended'],
   plugins: [],

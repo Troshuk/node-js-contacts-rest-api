@@ -2,10 +2,10 @@ import { StatusCodes } from 'http-status-codes';
 
 import catchErrors from '../decorators/catchErrors.js';
 import HttpError from '../helpers/HttpError.js';
-import contactService from '../services/contactService.js';
-import contactTypeService from '../services/contactTypeService.js';
 import { transformContact } from '../transformers/contactTransformer.js';
 import { orderTypes } from '../constants/queryConstants.js';
+import contactService from '../services/modelServices/ContactService.js';
+import contactTypeService from '../services/modelServices/ContactTypeService.js';
 
 const getId = (req) => req.params.id;
 
@@ -42,7 +42,7 @@ export const getAllContacts = catchErrors(async ({ query, user }, res) => {
 });
 
 export const getOneContact = catchErrors(async (req, res) => {
-  const contact = await contactService.getOne({
+  const contact = await contactService.findOne({
     _id: getId(req),
     owner: req.user,
   });
@@ -90,7 +90,7 @@ export const updateContact = catchErrors(async (req, res) => {
 });
 
 export const updateContactStatus = catchErrors(async (req, res) => {
-  const contact = await contactService.updateById(
+  const contact = await contactService.update(
     { _id: getId(req), owner: req.user },
     req.body
   );
