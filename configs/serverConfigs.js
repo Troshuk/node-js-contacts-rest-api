@@ -66,17 +66,22 @@ const MAILTRAP_SMTP = {
   FROM: MAILTRAP_SMTP_EMAIL_FROM,
 };
 
+const IS_DEV = ENV === envTypes.DEVELOPMENT;
+const IS_PROD = ENV === envTypes.PRODUCTION;
+const IS_TEST = ENV === envTypes.TEST;
+const IS_STAGING = ENV === envTypes.STAGING;
+
 export default {
   APP: {
     PORT,
-    BASE_API_URL: `${API_URL}:${PORT}/api`,
-    API_URL: `${API_URL}:${PORT}`,
+    BASE_API_URL: IS_PROD ? `${API_URL}/api` : `${API_URL}:${PORT}/api`,
+    API_URL: IS_PROD ? API_URL : `${API_URL}:${PORT}`,
 
     ENV,
-    IS_DEV: ENV === envTypes.DEVELOPMENT,
-    IS_PROD: ENV === envTypes.PRODUCTION,
-    IS_TEST: ENV === envTypes.TEST,
-    IS_STAGING: ENV === envTypes.STAGING,
+    IS_DEV,
+    IS_PROD,
+    IS_TEST,
+    IS_STAGING,
   },
   DB,
   TEST_DB: {
@@ -105,7 +110,7 @@ export default {
     PASSWORD_RESET_TEMPLATE_ID: SENDGRID_PASSWORD_RESET_TEMPLATE_ID,
     EAMIL_VERIFICATION_TEMPLATE_ID: SENDGRID_EAMIL_VERIFICATION_TEMPLATE_ID,
   },
-  SMTP_EMAIL: ENV === envTypes.PRODUCTION ? SENDGRID_SMTP : MAILTRAP_SMTP,
+  SMTP_EMAIL: IS_PROD ? SENDGRID_SMTP : MAILTRAP_SMTP,
   SENDGRID_SMTP,
   MAILTRAP_SMTP,
   CRYPTO: {
