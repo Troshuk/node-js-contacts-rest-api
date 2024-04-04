@@ -1,0 +1,12 @@
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+# optimize the performance by first installing packages and only after copying all the project files
+COPY ./package*.json ./
+RUN npm install
+COPY ./ ./
+
+EXPOSE ${PORT} ${DB_PORT}
+
+CMD ["npm", "run", "test"]

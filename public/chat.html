@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: bisque;
+        margin: 0;
+        padding: 0;
+      }
+      h1,
+      p {
+        text-align: center;
+      }
+      .container {
+        width: 100rem;
+        margin: 0 auto;
+      }
+      ul {
+        border: 1px solid orangered;
+        border-radius: 0.5rem;
+        background-color: white;
+        height: 60vh;
+        list-style: none;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column-reverse;
+      }
+      li {
+        font-size: 1.3rem;
+        color: lightslategray;
+      }
+      .input-group {
+        display: flex;
+        justify-content: space-between;
+        height: 3rem;
+      }
+      .input-group input {
+        border: 1px solid lightcyan;
+        outline: none;
+        width: 100%;
+        margin-right: 2rem;
+        padding: 0 1rem;
+        border-radius: 0.5rem;
+        display: block;
+      }
+      .input-group button {
+        border: none;
+        outline: none;
+        background-color: darkred;
+        padding: 0 3rem;
+        border-radius: 0.5rem;
+        color: white;
+        text-transform: uppercase;
+        font-size: 1rem;
+        line-height: 1rem;
+      }
+      .inactive {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chat JS</h1>
+    <p id="roomName">Socket io example</p>
+    <div class="container">
+      <ul id="messages"></ul>
+      <form id="msgForm" class="inactive">
+        <div class="input-group">
+          <input
+            id="msg"
+            type="text"
+            autocomplete="false"
+            placeholder="Enter your message"
+            required
+          />
+          <button type="submit">send</button>
+        </div>
+      </form>
+      <form id="joinForm">
+        <div class="input-group">
+          <input
+            id="nickname"
+            type="text"
+            autocomplete="false"
+            placeholder="Enter unique nickname"
+            required
+          />
+          <input
+            id="room"
+            type="text"
+            autocomplete="false"
+            placeholder="Enter room ID to join"
+            required
+          />
+          <button type="submit">send</button>
+        </div>
+      </form>
+    </div>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const myToken = urlParams.get('token');
+    const myRoom = urlParams.get('room');
+    const myName = urlParams.get('name');
+
+    const msgForm = document.getElementById('msgForm');
+    const joinForm = document.getElementById('joinForm');
+    const roomNameEl = document.getElementById('roomName');
+    const nicknameField = document.getElementById('nickname');
+    const roomField = document.getElementById('room');
+    const msgField = document.getElementById('msg');
+
+    let nickname;
+    let room;
+    let socket;
+
+    if (joinForm) {
+      if (myRoom) {
+        room = myRoom;
+        roomField.value = myRoom;
+      }
+
+      if (myName) {
+        nickname = myName;
+        nicknameField.value = myName;
+      }
+    }
+
+    const initSocket = (room, nickname) => {
+      io({
+        extraHeaders: {
+          authorization: `Bearer ${myToken}`,
+        },
+      });
+      socket = io.connect('http://localhost:3000/space');
+
+      socket.on('connect', () => {
+        msgForm.classList.remove('inactive');
+        joinForm.classList.add('inactive');
+        roomNameEl.innerHTML = room;
+
+        socket.emit('join', { room, nickname });
+
+        socket.on('message', ({ nickname, message }) => {
+          const messages = document.getElementById('messages');
+
+          messages.insertAdjacentHTML(
+            'afterbegin',
+            `
+            <li>
+                <span style="color: orangered; font-style: italic">${nickname}</span>
+                &nbsp;${message}
+            </li>
+           `
+          );
+        });
+      });
+    };
+
+    joinForm &&
+      joinForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        nickname = nicknameField?.value;
+        room = roomField?.value;
+
+        if (!nickname || !room) return;
+
+        initSocket(room, nickname);
+      });
+
+    msgForm &&
+      msgForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        message = msgField?.value;
+
+        if (!message) return;
+
+        socket.emit('message', { message, room, nickname });
+
+        msgField.value = '';
+      });
+  </script>
+</html>
