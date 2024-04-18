@@ -9,6 +9,3 @@ If you have node installed, use the following commands:
 If you have docker:
 1. `docker-compose -f docker-compose.yml up --build`: To start development container that would start mongodb and backend servers
 2. `docker-compose -f docker-compose.test.yml up --build`: To run tests using the docker's mongodb server
-
-Check out Postman Docs for this RestfullAPI:
-    https://documenter.getpostman.com/view/14885500/2sA35K2gNn
